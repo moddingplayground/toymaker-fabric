@@ -3,22 +3,34 @@ package net.moddingplayground.toymaker.impl;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
+import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.minecraft.data.DataGenerator;
+import net.moddingplayground.toymaker.Toymaker;
+import net.moddingplayground.toymaker.api.ToymakerEntrypoint;
 import net.moddingplayground.toymaker.impl.provider.AdvancementProvider;
 import net.moddingplayground.toymaker.impl.provider.ItemModelProvider;
 import net.moddingplayground.toymaker.impl.provider.LootTableProvider;
 import net.moddingplayground.toymaker.impl.provider.RecipeProvider;
 import net.moddingplayground.toymaker.impl.provider.StateModelProvider;
 import net.moddingplayground.toymaker.impl.provider.TagProvider;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public class DataMain {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Toymaker.MOD_ID);
+    @Nullable private static final String TARGET_MOD_ID = System.getProperty("%s.datagen.modid".formatted(Toymaker.MOD_ID));
+
     public static void main(String[] strings) throws IOException {
         OptionParser opts = new OptionParser();
 
@@ -44,6 +56,19 @@ public class DataMain {
             boolean genDev      = genAll || optionSet.has(dev);
             boolean genReports  = genAll || optionSet.has(reports);
             boolean genValidate = genAll || optionSet.has(validate);
+
+            FabricLoader loader = FabricLoader.getInstance();
+            List<EntrypointContainer<ToymakerEntrypoint>> initializers = loader.getEntrypointContainers(Toymaker.MOD_ID, ToymakerEntrypoint.class);
+            if (initializers.isEmpty()) {
+                LOGGER.error("No data generators were initialized!");
+            } else {
+                for (EntrypointContainer<ToymakerEntrypoint> initializer : initializers) {
+                    ModMetadata meta = initializer.getProvider().getMetadata();
+                    if (TARGET_MOD_ID != null && !meta.getId().equals(TARGET_MOD_ID)) continue;
+                    LOGGER.info("Initializing data generator for " + meta.getId());
+                    initializer.getEntrypoint().onInitializeToymaker();
+                }
+            }
 
             DataGenerator gen = create(
                 path,

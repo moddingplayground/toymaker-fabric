@@ -65,22 +65,10 @@ public class RecipeProvider extends AbstractDataProvider<Supplier<AbstractRecipe
         Map<Identifier, JsonElement> map = Maps.newHashMap();
         for (Supplier<AbstractRecipeGenerator> generator : this.getGenerators()) {
             AbstractRecipeGenerator gen = generator.get();
-            Identifier rootId = gen.getId("root");
             gen.accept(
                 (id, factory) -> factory.offerTo(provider -> {
                     JsonObject json = provider.toAdvancementJson();
-                    if (json != null) {
-                        if (map.put(id, json) != null) {
-                            throw new IllegalStateException("Duplicate recipe advancement " + id);
-                        } else {
-                            if (!map.containsKey(rootId)) {
-                                map.put(rootId, Advancement.Task.create()
-                                                                .criterion("impossible", new ImpossibleCriterion.Conditions())
-                                                                .toJson()
-                                );
-                            }
-                        }
-                    }
+                    if (json != null && map.put(id, json) != null) throw new IllegalStateException("Duplicate recipe advancement " + id);
                 }, id)
             );
         }

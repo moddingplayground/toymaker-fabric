@@ -16,11 +16,6 @@
   },
 
   "environment": "*",
-  "entrypoints": {
-    "main":   [
-      "net.moddingplayground.toymaker.Toymaker"
-    ]
-  },
   "mixins": [ "toymaker.mixins.json" ],
   "accessWidener": "toymaker.accesswidener",
 
