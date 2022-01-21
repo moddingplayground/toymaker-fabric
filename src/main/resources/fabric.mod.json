@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+
+  "id": "toymaker",
+  "version": "${version}",
+
+  "name": "Toymaker",
+
+  "license": [ "MIT (Code)" ],
+  "authors": [ "Daniel Orr (Andante)" ],
+
+  "contact": {
+    "homepage": "https://moddingplayground.net/toymaker",
+    "sources": "https://github.com/moddingplayground/toymaker-fabric",
+    "issues": "https://github.com/moddingplayground/toymaker-fabric/issues"
+  },
+
+  "environment": "*",
+  "entrypoints": {
+    "main":   [
+      "net.moddingplayground.toymaker.Toymaker"
+    ]
+  },
+  "mixins": [ "toymaker.mixins.json" ],
+  "accessWidener": "toymaker.accesswidener",
+
+  "depends": {
+    "java": ">=17",
+    "minecraft": ">=1.18",
+    "fabricloader": ">=0.12",
+    "fabric": ">=0.46"
+  }
+}

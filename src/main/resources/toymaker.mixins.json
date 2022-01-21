@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_17",
+  "package": "net.moddingplayground.toymaker.impl.mixin",
+  "plugin": "net.moddingplayground.toymaker.impl.mixin.DataGenMixinPlugin",
+  "client": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
