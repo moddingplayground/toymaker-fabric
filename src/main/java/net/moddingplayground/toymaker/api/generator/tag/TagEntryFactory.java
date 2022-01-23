@@ -10,22 +10,22 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Function;
 
-public class TagFactory<T> {
+public class TagEntryFactory<T> {
     private boolean replace;
     private final Function<T, Identifier> idGetter;
     private final Set<String> entries = new LinkedHashSet<>();
 
-    public TagFactory(Function<T, Identifier> idGetter) {
+    public TagEntryFactory(Function<T, Identifier> idGetter) {
         this.idGetter = idGetter;
     }
 
-    public final TagFactory<T> add(String... ids) {
+    public final TagEntryFactory<T> add(String... ids) {
         this.entries.addAll(Arrays.asList(ids));
         return this;
     }
 
     @SafeVarargs
-    public final TagFactory<T> add(T... objects) {
+    public final TagEntryFactory<T> add(T... objects) {
         for (T obj : objects) {
             this.entries.add(this.idGetter.apply(obj).toString());
         }
@@ -33,7 +33,7 @@ public class TagFactory<T> {
     }
 
     @SafeVarargs
-    public final TagFactory<T> add(Tag<T>... tags) {
+    public final TagEntryFactory<T> add(Tag<T>... tags) {
         for (Tag<T> tag : tags) {
             if (tag instanceof Tag.Identified identified) {
                 this.entries.add(String.format("#%s", identified.getId()));
@@ -44,11 +44,11 @@ public class TagFactory<T> {
         return this;
     }
 
-    public final void copyTo(TagFactory<?> factory) {
+    public final void copyTo(TagEntryFactory<?> factory) {
         this.entries.forEach(factory::add);
     }
 
-    public final TagFactory<T> replace(boolean replace) {
+    public final TagEntryFactory<T> replace(boolean replace) {
         this.replace = replace;
         return this;
     }
